@@ -3,42 +3,30 @@
 #I need graphs of the raw data over time
 #Include species in the stacked bar charts - Jes has code for this - might be interesting if there's a pattern in the forbs
 
-#Cleaning####
-gh <- read.csv("gh23.csv")
-gh <- gh[1:17]
+#Import####
+load("Cleaned_Data/main_dfs.RData")
+library(tidyverse)
+library(viridis)
 
-library(dplyr)
-library(magrittr)
-
+#Prep####
+gh <- cover_dat
 gh_final <- gh %>%
-  filter(gh$Date == "3/1/23") 
-
-
-library(ggplot2)
-
-gh_final$Mix[gh_final$Mix == 1] <- "Forb"
-gh_final$Mix[gh_final$Mix == 2] <- "Grass"
-gh_final$Mix[gh_final$Mix == 3] <- "Bulrush"
-gh_final$Mix[gh_final$Mix == 4] <- "Equal"
-
-gh_final$Density <- as.factor(gh_final$Density)
-gh_final$PP <- as.factor(gh_final$PP)
-gh_final$Mix <- as.factor(gh_final$Mix)
+  filter(gh$Date == "2023-03-01") 
 
 #Native cover####
 gh_final %>%
   select(-Phrag) %>%
-  filter(Tub != "PHAU")%>%
+  filter(Mix != "PHAU")%>%
   ggplot(aes(x = Mix, y = Total, color = Density)) +
-  facet_wrap(~PP) +
-  stat_summary(aes(group = interaction(Mix, Density, PP)),
+  facet_wrap(~Phrag_Presence) +
+  stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
                fun = mean, geom = "point") +
-  stat_summary(aes(group = interaction(Mix, Density, PP)),
+  stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
                fun.data = mean_se, geom = "errorbar") +
   labs(x = "Seed Mix", y = "Total Native Cover")
 
 #Phrag Cover####
-gh_final %>% #figure out how to add the phrag control here
+gh_final %>% 
   ggplot(aes(x = Mix, y = Phrag, color = Density)) +
   stat_summary(aes(group = interaction(Mix, Density)),
                fun = mean, geom = "point") +
@@ -48,12 +36,12 @@ gh_final %>% #figure out how to add the phrag control here
 
 #Stacked bargraph####
 gh_totals <- gh_final %>%
-  filter(Tub != "PHAU") %>%
-  group_by(Mix, Density, PP) %>%
-  summarize(grass = sum(DISP, MUAS, PUNU),
-            forb = sum(EUOC, EUMA, SOCA),
-            bulrush = sum(SCAM, SCAC, BOMA),
-            phrag = Phrag)
+  filter(Mix != "PHAU") %>%
+  group_by(Mix, Density, Phrag_Presence) %>%
+  summarize(Grass = sum(DISP, MUAS, PUNU),
+            Forb = sum(EUOC, EUMA, SOCA),
+            Bulrush = sum(SCAM, SCAC, BOMA),
+            Phragmites = Phrag)
 
 gh_tw <- gh_totals %>%
   tidyr::pivot_longer(
@@ -63,10 +51,13 @@ gh_tw <- gh_totals %>%
   )
 
 gh_tw %>%
-  filter(PP != "WO") %>%
+  filter(Phrag_Presence != "WO") %>%
   ggplot(aes(fill = group, y = cover, x = Density)) +
-    geom_bar(position = "fill", stat = "identity") +
-  facet_wrap(~Mix)
+  geom_bar(position = "fill", stat = "identity") +
+  labs(x = "Density", y = "Proportional Cover", fill = "Group")+
+  facet_wrap(~Mix) 
+
+ggsave("Stacked_Bargraph.jpeg")
 
 #Reduction graph####
 
@@ -74,13 +65,13 @@ gh_tw %>%
 
 #get the treatment PHAU values
 b <- gh_final %>%
-  filter(PP == "W") %>%
-  select(Tub, Mix, Density, PP, Replicate, Phrag)
+  filter(Phrag_Presence == "W") %>%
+  select(Mix, Density, Phrag_Presence, Replicate, Phrag)
 
 #get the control values
 final.matrix <- gh_final %>% 
-  filter(Tub == "PHAU") %>%
-  select(Tub, Replicate, Total)
+  filter(Mix == "PHAU") %>%
+  select(Mix, Replicate, Total)
 
 c <- mean(final.matrix$Total)
 
@@ -90,13 +81,19 @@ final.df <- b %>%
 
 #graph
 final.df %>%
-  ggplot(aes(x = reorder(Mix, P.Cover.Red), y = P.Cover.Red, color = Density)) +
+  mutate(Mix = factor(Mix,
+                      levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
+  ggplot(aes(x = Mix, y = P.Cover.Red, color = Density), size = 2) +
   stat_summary(aes(group = Density),
+               size = 2,
                fun = mean, geom = "point", 
                position = position_dodge(0.95)) +
   stat_summary(aes(group = Density, width = .5),
+               size = 1,
                fun.data = mean_se, geom = "errorbar",
                position = position_dodge(0.95)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
         axis.title.y = ggtext::element_markdown()) +
   labs(y = "Percent Change in *Phragmites* Cover", x = "Mix")
+
+ggsave("Reduction_graph_23.jpeg")
