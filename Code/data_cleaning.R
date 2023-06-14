@@ -263,6 +263,13 @@ biomass_dat <- biomass_dat %>% pivot_wider(
   id_cols = c(Mix, Density, Phrag_Presence, Replicate)
 )
 
+## Get rid of the NAs in the W category ####
+
+biomass_dat %>% 
+  filter(Phrag_Presence == "W" & is.na(PHAU))
+
+biomass_dat[60, 5] <- 0
+
 ## Name the mixes ####
 biomass_dat$Mix[biomass_dat$Mix == 1] <- "Forb"
 biomass_dat$Mix[biomass_dat$Mix == 2] <- "Grass"

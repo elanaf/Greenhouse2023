@@ -436,10 +436,6 @@ c <- mean(final.matrix$PHAU)
 final.df <- b %>%
   mutate(P.Biomass.Red = (PHAU - c)/c)
 
-#NA should be 100% because no PHAU grew but it was supposed to - final cover was <1
-final.df[29, 5] <- 0
-final.df[29, 6] <- -1
-
 #graph
 final.df %>%
   mutate(Mix = factor(Mix,
