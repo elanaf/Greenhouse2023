@@ -19,7 +19,7 @@ gh_final %>%
   mutate(Mix = factor(Mix,
                       levels = c("Grass", "Bulrush", "Forb", "Equal"))) %>% 
   ggplot(aes(x = Mix, y = Total, color = Density)) +
-  facet_wrap(~Phrag_Presence, labeller = as_labeller(trt_label)) +
+  facet_grid(~factor(Phrag_Presence, levels=c("WO", "W")), labeller = as_labeller(trt_label)) +
   stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
                fun = mean, geom = "point") +
   stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
@@ -30,14 +30,16 @@ gh_final %>%
 ggsave("native_cover_by-mix.jpeg")
 
 ##Phrag Cover####
+colors <- c("darkgray", "#F8766D", "#00BFC4")
 gh_final %>% 
   mutate(Mix = factor(Mix,
-                      levels = c("Grass", "Bulrush", "Forb", "Equal", "PHAU"))) %>% 
+                      levels = c("PHAU","Grass", "Bulrush", "Forb", "Equal"))) %>% 
   ggplot(aes(x = Mix, y = Phrag, color = Density)) +
   stat_summary(aes(group = interaction(Mix, Density)),
                fun = mean, geom = "point") +
   stat_summary(aes(group = interaction(Mix, Density)),
                fun.data = mean_se, geom = "errorbar") +
+  scale_color_manual(values = colors)+
   labs(x = "Seed Mix", y = "Final *Phragmites* Cover")+
   scale_color_hue(labels = c('High', 'Low', 'Control')) +
   theme(axis.title.y = ggtext::element_markdown()) +
@@ -46,6 +48,7 @@ gh_final %>%
                               'Forb' = 'Forb',
                               'Equal'= "Equal",
                               'PHAU' = 'Control'))
+  
 
 ggsave("phrag_cover_by-mix.jpeg")
 
@@ -77,11 +80,12 @@ a <- gh_tw %>%
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "Density", y = "", fill = "Group", 
        title = "*Phragmites* Present")+
-  facet_wrap(~Mix) +
+  facet_grid(~Mix) +
   scale_fill_manual(values = colors)+
-  theme(plot.title = ggtext::element_markdown(),
+  theme(plot.title = ggtext::element_markdown(size = 10),
         legend.key.size = unit(.25, "cm"),
-        legend.title = element_text(size = 10)) +
+        legend.title = element_text(size = 10),
+        legend.position = "bottom") +
   scale_x_discrete(labels = c("H" = "High",
                               'L' = "Low"))
 
@@ -92,15 +96,15 @@ b <- gh_tw %>%
   filter(Phrag_Presence != "W") %>%
   ggplot(aes(fill = group, y = cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
-  labs(x = "Density", y = "Proportional Cover", fill = "Group", 
+  labs(x = "", y = "Proportional Cover", fill = "Group", 
        title = "*Phragmites* Absent")+
-  facet_wrap(~Mix) +
+  facet_grid(~Mix) +
   scale_fill_manual(values = colors)+
-  theme(plot.title = ggtext::element_markdown())+
+  theme(plot.title = ggtext::element_markdown(size = 10))+
   scale_x_discrete(labels = c("H" = "High",
-                              'L' = "Low"))
+                              'L' = "Low")) 
 
-b + a
+b/a
 
 ggsave("stacked_group.jpeg")
 
@@ -130,13 +134,26 @@ c <- gh_sl %>%
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "Density", y = "", fill = "Species",
        title = "*Phragmites* Present") +
-  facet_wrap(~Mix) +
-  scale_fill_manual(values = cp)+
-  theme(plot.title = ggtext::element_markdown(),
+  facet_grid(~Mix)+
+  scale_fill_manual(values = cp,
+                    labels = c('*Bolboschoenus martitimus*', 
+                               '*Schoenoplectus acutus*',
+                               '*Schoenoplectus americanus*', 
+                               '*Distichlis spicata*',
+                               '*Muhlenbergia asperifolia*', 
+                               '*Puccinellia nuttalliana*',
+                               "*Eutrochium maculatum*",
+                               '*Euthamia occidentalis*',
+                               "*Solidago canadensis*",
+                                '*Phragmites australis*'))+
+  theme(plot.title = ggtext::element_markdown(size = 10),
+        legend.text = ggtext::element_markdown(),
         legend.key.size = unit(.25, "cm"),
-        legend.title = element_text(size = 10))+
+        legend.title = element_text(size = 10),
+        legend.position = "bottom")+
   scale_x_discrete(labels = c("H" = "High",
-                              'L' = "Low"))
+                              'L' = "Low")) +
+  guides(fill=guide_legend(ncol = 2))
 
 ####no phrag ####
 #colors
@@ -149,14 +166,14 @@ d <- gh_sl %>%
                                      "Phrag"))) %>% 
   ggplot(aes(fill = Species, y = Cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
-  labs(x = "Density", y = "Proprotional Cover", fill = "Species",
+  labs(x = "", y = "Proprotional Cover", fill = "Species",
        title = "*Phragmites* Absent") +
-  facet_wrap(~Mix) +
+  facet_grid(~Mix) +
   scale_fill_manual(values = cp) +
-  theme(plot.title = ggtext::element_markdown())+
+  theme(plot.title = ggtext::element_markdown(size = 10))+
   scale_x_discrete(labels = c("H" = "High",
                               'L' = "Low"))
-d + c
+d / c
 ggsave("stacked_species.jpeg")
 
 ##Reduction graph####
@@ -213,10 +230,11 @@ cover_dat %>%
                fun.data = mean_se, geom = "errorbar") +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
         axis.title.y = ggtext::element_markdown(),
-        legend.title = ggtext::element_markdown()) +
+        legend.title = ggtext::element_markdown(),
+        legend.position = "bottom") +
   labs(y = "Total Native Cover Over Time", x = "Date",
        shape = "*Phragmites* Presence") +
-  facet_wrap(~Mix) +
+  facet_grid(~Mix) +
   scale_color_hue(labels = c('High', 'Low')) +
   scale_shape(labels = c("Present", "Absent")) 
 
@@ -251,9 +269,10 @@ cover_dat %>%
   stat_summary(aes(group = interaction(Density, Phrag_Presence), width = .5),
                fun.data = mean_se, geom = "errorbar") +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
-        axis.title.y = ggtext::element_markdown()) +
+        axis.title.y = ggtext::element_markdown(),
+        legend.position = "bottom") +
   labs(y = "*Phragmites* Cover Over Time", x = "Date") +
-  facet_wrap(~Mix, labeller = as_labeller(trt_label)) +   
+  facet_grid(~Mix, labeller = as_labeller(trt_label)) +   
   scale_color_manual(values = c("H" = "#F8766D", "L" = "#619CFF", "Control" = "#00BA38"),
                      labels = c("High", "Low", "Control"))
 
@@ -275,7 +294,7 @@ biomass_dat %>%
   mutate(Mix = factor(Mix,
                       levels = c("Grass", "Bulrush", "Forb", "Equal"))) %>% 
   ggplot(aes(x = Mix, y = Total_Native, color = Density)) +
-  facet_wrap(~Phrag_Presence, labeller = as_labeller(trt_label)) +
+  facet_grid(~factor(Phrag_Presence, levels=c("WO", "W")), labeller = as_labeller(trt_label)) +
   stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
                fun = mean, geom = "point") +
   stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
@@ -286,14 +305,16 @@ biomass_dat %>%
 ggsave("native_biomass_by-mix.jpeg")
 
 ##Phrag Biomass####
+colors <- c("darkgray", "#F8766D", "#00BFC4")
 biomass_dat %>% 
   mutate(Mix = factor(Mix,
-                      levels = c("Grass", "Bulrush", "Forb", "Equal", "PHAU"))) %>% 
+                      levels = c("PHAU", "Grass", "Bulrush", "Forb", "Equal"))) %>% 
   ggplot(aes(x = Mix, y = PHAU, color = Density)) +
   stat_summary(aes(group = interaction(Mix, Density)),
                fun = mean, geom = "point") +
   stat_summary(aes(group = interaction(Mix, Density)),
                fun.data = mean_se, geom = "errorbar") +
+  scale_color_manual(values = colors)+
   labs(x = "Seed Mix", y = "*Phragmites* Biomass")+
   scale_color_hue(labels = c('High', 'Low', 'Control'))+
   scale_x_discrete(labels = c("Grass" = "Grass",
@@ -334,10 +355,11 @@ b <- biomass_l %>%
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "Density", y = "", fill = "Group",
        title = "*Phragmites* Present")+
-  facet_wrap(~Mix) +  
-  theme(plot.title = ggtext::element_markdown(),
+  facet_grid(~Mix) +  
+  theme(plot.title = ggtext::element_markdown(size = 10),
                             legend.key.size = unit(.25, "cm"),
-                            legend.title = element_text(size = 10)) +
+                            legend.title = element_text(size = 10),
+        legend.position = "bottom") +
   scale_x_discrete(labels = c("H" = "High",
                               'L' = "Low"))+
   scale_fill_manual(values = colors)
@@ -351,13 +373,13 @@ a <- biomass_l %>%
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
   labs(x = "Density", y = "Proportional Biomass", fill = "Group",
        title = "*Phragmites* Absent")+
-  facet_wrap(~Mix) +
-  theme(plot.title = ggtext::element_markdown())+
+  facet_grid(~Mix) +
+  theme(plot.title = ggtext::element_markdown(size = 10))+
   scale_x_discrete(labels = c("H" = "High",
                               'L' = "Low"))+
   scale_fill_manual(values = colors)
 
-a + b
+a / b
 ggsave("stacked_biomass_group.jpeg")
 
 ### Stacked with Species ####
@@ -384,15 +406,28 @@ d <- biomass_sl %>%
                                      "PHAU"))) %>% 
   ggplot(aes(fill = Species, y = Biomass, x = Density)) +
   geom_bar(position = "fill", stat = "identity") +
-  labs(x = "Density", y = "", fill = "Species",
+  labs(x = "Density", y = "Proportional Biomass", fill = "Species",
        title = "*Phragmites* Present") +
-  facet_wrap(~Mix) +
-  scale_fill_manual(values = cp) +  
-  theme(plot.title = ggtext::element_markdown(),
+  facet_grid(~Mix) +
+  scale_fill_manual(values = cp,
+                    labels = c('*Bolboschoenus martitimus*', 
+                               '*Schoenoplectus acutus*',
+                               '*Schoenoplectus americanus*', 
+                               '*Distichlis spicata*',
+                               '*Muhlenbergia asperifolia*', 
+                               '*Puccinellia nuttalliana*',
+                               "*Eutrochium maculatum*",
+                               '*Euthamia occidentalis*',
+                               "*Solidago canadensis*",
+                               '*Phragmites australis*'))+ 
+  theme(plot.title = ggtext::element_markdown(size = 10),
+        legend.text = ggtext::element_markdown(),
         legend.key.size = unit(.25, "cm"),
-        legend.title = element_text(size = 10)) +
+        legend.title = element_text(size = 10),
+        legend.position = "bottom") +
   scale_x_discrete(labels = c("H" = "High",
-                              'L' = "Low"))
+                              'L' = "Low"))+
+  guides(fill=guide_legend(ncol = 2))
 
 ####no phrag ####
 #colors
@@ -405,15 +440,14 @@ c <- biomass_sl %>%
                                      "PHAU"))) %>% 
   ggplot(aes(fill = Species, y = Biomass, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
-  labs(x = "Density", y = "Proprotional Biomass", fill = "Species",
-       title = "*Phragmites* Absent") +
-  facet_wrap(~Mix) +
-  scale_fill_manual(values = cp) +  
-  theme(plot.title = ggtext::element_markdown()) +
+  labs(x = "", y = "", fill = "Species")+
+  ggtitle("*Phragmites* Absent") +
+  facet_grid(~Mix) +
+  scale_fill_manual(values = cp)+  
+  theme(plot.title = ggtext::element_markdown(size = 10)) +
   scale_x_discrete(labels = c("H" = "High",
                               'L' = "Low"))
-
-c + d
+c / d
 
 ggsave("stacked_biomass_species.jpeg")
 
