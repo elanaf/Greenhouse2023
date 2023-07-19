@@ -8,9 +8,15 @@ library(multcomp)
 options(contrasts = c("contr.sum", "contr.poly"))
 
 #Native cover ####
+
 mdf <- cover_dat %>%
   dplyr::filter(!is.na(Density),
                 Date == "2023-03-01")
+
+#change order of density and also labels for graphing
+mdf$Density <- factor(mdf$Density, levels = c("L", "H"),
+                                 labels = c("Low", "High")
+)
 
 mdf.m1<- glmmTMB(Total ~ Phrag_Presence * Density * Mix  #* for interaction
                  + (1|Replicate),
@@ -45,7 +51,7 @@ ggplot(data = data1, aes(x = Density, y = response * 100)) +
   geom_errorbar(aes(ymin = 100*(response - SE),
                     ymax = 100*(response+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model predicted percent cover") +
+  labs(x="Native Seeding Density", y = "Model Predicted Cover (%)") +
   geom_text(aes(label = .group,  y = response * 100),
             nudge_x = 0.2)
 
@@ -55,6 +61,10 @@ ggsave("model_means_native_cover.jpeg")
 mdf <- cover_dat %>%
   dplyr::filter(!is.na(Phrag),
                 Date == "2023-03-01")
+#change order of density and also labels for graphing
+mdf$Density <- factor(mdf$Density, levels = c("L", "H"),
+                      labels = c("Low", "High")
+)
 
 mdf.m2<- glmmTMB(Phrag ~ Density * Mix  #* for interaction
                  + (1|Replicate),
@@ -89,7 +99,7 @@ ggplot(data = data2, aes(x = Density, y = response * 100)) +
   geom_errorbar(aes(ymin = 100*(response - SE),
                     ymax = 100*(response+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model predicted percent cover") +
+  labs(x="Native Seeding Density", y = "Model Predicted Cover (%)") +
   geom_text(aes(label = .group,  y = response * 100),
             nudge_x = 0.2)
 
@@ -104,6 +114,10 @@ mdf <- biomass_dat %>%
   dplyr::filter(!is.na(Density))
 
 
+#change order of density and also labels for graphing
+mdf$Density <- factor(mdf$Density, levels = c("L", "H"),
+                      labels = c("Low", "High")
+)
 
 mdf.m3<- glmmTMB(Total_Native ~ Phrag_Presence * Density * Mix  #* for interaction
                  + (1|Replicate),
@@ -140,7 +154,7 @@ ggplot(data = data3, aes(x = Density, y = emmean)) +
   geom_errorbar(aes(ymin = (emmean - SE),
                     ymax = (emmean+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model predicted biomass") +
+  labs(x="Native Seeding Density", y = "Model Predicted Biomass (g)") +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2)
 
@@ -154,7 +168,7 @@ ggplot(data = data4, aes(x = Mix, y = emmean)) +
   geom_errorbar(aes(ymin = (emmean - SE),
                     ymax = (emmean+SE)),
                 width=0, size=0.5) +
-  labs(x="Seeded Mix", y = "Model predicted biomass") +
+  labs(x="Seeded Mix", y = "Model Predicted Biomass (g)") +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2)
 
@@ -164,6 +178,11 @@ ggsave("model_means_native_biomass_mix.jpeg")
 # Phrag biomass ####
 mdf <- biomass_dat %>%
   dplyr::filter(!is.na(PHAU))
+
+#change order of density and also labels for graphing
+mdf$Density <- factor(mdf$Density, levels = c("L", "H"),
+                      labels = c("Low", "High")
+)
 
 mdf.m4<- glmmTMB(PHAU ~ Density * Mix  #* for interaction
                  + (1|Replicate),
@@ -194,7 +213,7 @@ ggplot(data = data5, aes(x = Density, y = emmean)) +
   geom_errorbar(aes(ymin = (emmean - SE),
                     ymax = (emmean+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model predicted biomass") +
+  labs(x="Native Seeding Density", y = "Model Predicted Biomass (g)") +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2)
 

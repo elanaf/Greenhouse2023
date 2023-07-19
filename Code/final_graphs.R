@@ -172,38 +172,38 @@ c <- gh_sl %>%
                               'L' = "Low")) +
   guides(fill=guide_legend(ncol = 2))
 
-gh_sl %>% 
-  filter(Phrag_Presence != "WO") %>% 
-  mutate(Species = factor(Species, 
-                          levels = c("BOMA", "SCAC", "SCAM",
-                                     "DISP", "MUAS", "PUNU",
-                                     "EUMA", "EUOC", "SOCA",
-                                     "Phrag"))) %>% 
-  ggplot(aes(fill = Species, y = Cover, x = Density)) +
-  geom_bar(position = "fill", stat = "identity") +
-  labs(x = "Density", y = "Relative Abundance", fill = "Species") +
-  facet_grid(~Mix)+
-  scale_fill_manual(values = cp,
-                    labels = c('*Bolboschoenus martitimus*', 
-                               '*Schoenoplectus acutus*',
-                               '*Schoenoplectus americanus*', 
-                               '*Distichlis spicata*',
-                               '*Muhlenbergia asperifolia*', 
-                               '*Puccinellia nuttalliana*',
-                               "*Eutrochium maculatum*",
-                               '*Euthamia occidentalis*',
-                               "*Solidago canadensis*",
-                               '*Phragmites australis*'))+
-  theme(plot.title = ggtext::element_markdown(size = 10),
-        legend.text = ggtext::element_markdown(),
-        legend.key.size = unit(.25, "cm"),
-        legend.title = element_text(size = 10),
-        legend.position = "bottom")+
-  scale_x_discrete(labels = c("H" = "High",
-                              'L' = "Low")) +
-  guides(fill=guide_legend(ncol = 2))
-
-ggsave("stacked_species_cover_w.jpeg")
+# gh_sl %>% 
+#   filter(Phrag_Presence != "WO") %>% 
+#   mutate(Species = factor(Species, 
+#                           levels = c("BOMA", "SCAC", "SCAM",
+#                                      "DISP", "MUAS", "PUNU",
+#                                      "EUMA", "EUOC", "SOCA",
+#                                      "Phrag"))) %>% 
+#   ggplot(aes(fill = Species, y = Cover, x = Density)) +
+#   geom_bar(position = "fill", stat = "identity") +
+#   labs(x = "Density", y = "Relative Abundance", fill = "Species") +
+#   facet_grid(~Mix)+
+#   scale_fill_manual(values = cp,
+#                     labels = c('*Bolboschoenus martitimus*', 
+#                                '*Schoenoplectus acutus*',
+#                                '*Schoenoplectus americanus*', 
+#                                '*Distichlis spicata*',
+#                                '*Muhlenbergia asperifolia*', 
+#                                '*Puccinellia nuttalliana*',
+#                                "*Eutrochium maculatum*",
+#                                '*Euthamia occidentalis*',
+#                                "*Solidago canadensis*",
+#                                '*Phragmites australis*'))+
+#   theme(plot.title = ggtext::element_markdown(size = 10),
+#         legend.text = ggtext::element_markdown(),
+#         legend.key.size = unit(.25, "cm"),
+#         legend.title = element_text(size = 10),
+#         legend.position = "bottom")+
+#   scale_x_discrete(labels = c("H" = "High",
+#                               'L' = "Low")) +
+#   guides(fill=guide_legend(ncol = 2))
+# 
+# ggsave("stacked_species_cover_w.jpeg")
 
 ####no phrag ####
 #colors
@@ -451,7 +451,7 @@ cp <- c("khaki3", "yellow2",
 d <- biomass_sl %>% 
   filter(Phrag_Presence != "WO") %>% 
   mutate(Species = factor(Species, 
-                          levels = c("BOMA", "SCAC", "SCAM",
+                          levels = c("SCAC", "SCAM",
                                      "DISP", "MUAS", "PUNU",
                                      "EUMA", "EUOC", "SOCA",
                                      "PHAU"))) %>% 
@@ -461,8 +461,7 @@ d <- biomass_sl %>%
        title = "*Phragmites* Present") +
   facet_grid(~Mix) +
   scale_fill_manual(values = cp,
-                    labels = c('*Bolboschoenus martitimus*', 
-                               '*Schoenoplectus acutus*',
+                    labels = c('*Schoenoplectus acutus*',
                                '*Schoenoplectus americanus*', 
                                '*Distichlis spicata*',
                                '*Muhlenbergia asperifolia*', 
@@ -485,7 +484,7 @@ d <- biomass_sl %>%
 c <- biomass_sl %>% 
   filter(Phrag_Presence != "W") %>% 
   mutate(Species = factor(Species, 
-                          levels = c("BOMA", "SCAC", "SCAM",
+                          levels = c("SCAC", "SCAM",
                                      "DISP", "MUAS", "PUNU",
                                      "EUMA", "EUOC", "SOCA",
                                      "PHAU"))) %>% 
