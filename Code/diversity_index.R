@@ -2,6 +2,7 @@
 load("Cleaned_Data/main_dfs.RData")
 library(vegan)
 library(tidyverse)
+library(patchwork)
 
 #the general equation is vegan::diversity(x, "shannon")
 #Examples ####
@@ -32,7 +33,7 @@ final.dat3 <- final.dat2
 row.names(final.dat3) <- final.dat3$"Tub"
 
 #Now try the diversity calculation
-final.dat3 <- select(final.dat3, -c("Tub", 'Date', 'Total', 'Notes'))
+final.dat3 <- dplyr::select(final.dat3, -c("Tub", 'Date', 'Total', 'Notes'))
 div <- diversity(final.dat3, "shannon")
 final.dat$shannon <- div
 
@@ -47,9 +48,20 @@ final.dat %>%
   geom_boxplot() +
   facet_wrap(~Phrag_Presence) +
   ylab("Shannon Diversity Index") +
-  scale_fill_hue(labels = c('High', 'Low')) #change legend labels
+  scale_fill_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) #change legend labels
 
-ggsave("cover_shannon.jpeg")
+#ggsave("cover_shannon.jpeg")
+a <- final.dat %>% 
+  filter(Mix != "PHAU") %>% 
+  ggplot(aes(x = Mix, y = shannon, fill = Density)) +
+  geom_boxplot() +
+  facet_wrap(~Phrag_Presence) +
+  labs(y = "Shannon Diversity Index", x = "Mix", title = '(a)') +
+  scale_fill_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))+ #change legend labels
+  theme(plot.title = element_text(size = 9),
+        legend.position = "none",
+        axis.text.x = element_text(angle = 45, hjust = 0.9))
+
 
 # Biomass ####
 #make wide
@@ -70,7 +82,7 @@ final.dat3 <- final.dat2
 row.names(final.dat3) <- final.dat3$"Tub"
 
 #Now try the diversity calculation
-final.dat3 <- select(final.dat3, -"Tub")
+final.dat3 <- dplyr::select(final.dat3, -"Tub")
 div <- diversity(final.dat3, "shannon")
 final.dat$shannon <- div
 
@@ -83,6 +95,21 @@ final.dat %>%
   geom_boxplot() +
   facet_wrap(~Phrag_Presence) +
   ylab("Shannon Diversity Index")+
-  scale_fill_hue(labels = c('High', 'Low')) #change legend labels
+  scale_fill_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) + #change legend labels
+  theme(plot.title = element_text(size = 9))
 
-ggsave("biomass_shannon.jpeg")
+#ggsave("biomass_shannon.jpeg")
+
+b <- final.dat %>% 
+  filter(Mix != "PHAU") %>% 
+  ggplot(aes(x = Mix, y = shannon, fill = Density)) +
+  geom_boxplot() +
+  facet_wrap(~Phrag_Presence) +
+  labs(y="", title = "(b)")+
+  scale_fill_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) + #change legend labels
+  theme(plot.title = element_text(size = 9),
+        axis.text.x = element_text(angle = 45, hjust = 0.9))
+
+# Combine graphs ####
+a+b
+ggsave("shannon_tog.jpeg")

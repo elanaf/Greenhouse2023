@@ -5,6 +5,7 @@ library(DHARMa)
 library(emmeans)
 library(car)
 library(multcomp)
+library(patchwork)
 options(contrasts = c("contr.sum", "contr.poly"))
 
 #Native cover ####
@@ -218,3 +219,74 @@ ggplot(data = data5, aes(x = Density, y = emmean)) +
             nudge_x = 0.2)
 
 ggsave("model_means_phrag_biomass_density.jpeg")
+
+# Combining graphs ####
+##Native graphs ####
+a <- ggplot(data = data1, aes(x = Density, y = response * 100, color = Density)) +
+  geom_point(size=2) +
+  geom_errorbar(aes(ymin = 100*(response - SE),
+                    ymax = 100*(response+SE)),
+                width=0, size=0.5) +
+  labs(x="Native Seeding Density", y = "Model Predicted Cover (%)",
+       title = '(a)') +
+  geom_text(aes(label = .group,  y = response * 100),
+            nudge_x = 0.2, color = "black") +
+  scale_color_manual(values = c("darkblue", "red3")) +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 9))
+
+b <- ggplot(data = data3, aes(x = Density, y = emmean, color = Density)) +
+  geom_point(size=2) +
+  geom_errorbar(aes(ymin = (emmean - SE),
+                    ymax = (emmean+SE)),
+                width=0, size=0.5) +
+  labs(x="Native Seeding Density", y = "Model Predicted Biomass (g)",
+       title = '(b)') +
+  geom_text(aes(label = .group,  y = emmean),
+            nudge_x = 0.2, color = "black")+
+  scale_color_manual(values = c("darkblue", "red3"))+
+  theme(legend.position = "none",
+        plot.title = element_text(size = 9))
+
+c <- ggplot(data = data4, aes(x = Mix, y = emmean)) +
+  geom_point(size=2) +
+  geom_errorbar(aes(ymin = (emmean - SE),
+                    ymax = (emmean+SE)),
+                width=0, size=0.5) +
+  labs(x="Seeded Mix", y = "Model Predicted Biomass (g)",
+       title = '(c)') +
+  geom_text(aes(label = .group,  y = emmean),
+            nudge_x = 0.2)+
+  theme(plot.title = element_text(size = 9))
+(a + b) / c
+ggsave("native_cover_biomass_density_mix_tog.jpeg")
+
+##Phrag graphs ####
+a <- ggplot(data = data2, aes(x = Density, y = response * 100, color = Density)) +
+  geom_point(size=2) +
+  geom_errorbar(aes(ymin = 100*(response - SE),
+                    ymax = 100*(response+SE)),
+                width=0, size=0.5) +
+  labs(x="Native Seeding Density", y = "Model Predicted Cover (%)",
+       title = "(a)") +
+  geom_text(aes(label = .group,  y = response * 100),
+            nudge_x = 0.2, color = "black") +
+  scale_color_manual(values = c("darkblue", "red3"))+
+  theme(plot.title = element_text(size = 9),
+        legend.position = "none")
+
+b <- ggplot(data = data5, aes(x = Density, y = emmean, color = Density)) +
+  geom_point(size=2) +
+  geom_errorbar(aes(ymin = (emmean - SE),
+                    ymax = (emmean+SE)),
+                width=0, size=0.5) +
+  labs(x="Native Seeding Density", y = "Model Predicted Biomass (g)",
+       title = '(b)') +
+  geom_text(aes(label = .group,  y = emmean),
+            nudge_x = 0.2, color = "black") +
+  scale_color_manual(values = c("darkblue", "red3")) +
+  theme(plot.title = element_text(size = 9),
+        legend.position = "none")
+
+a + b
+ggsave("phrag_cover_biomass_density_tog.jpeg")
