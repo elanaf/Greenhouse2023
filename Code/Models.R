@@ -222,17 +222,19 @@ ggsave("model_means_phrag_biomass_density.jpeg")
 
 # Combining graphs ####
 ##Native graphs ####
-a <- ggplot(data = data1, aes(x = Density, y = response * 100, color = Density)) +
+a <- ggplot(data = data1, aes(x = Density, y = response, color = Density)) +
   geom_point(size=2) +
-  geom_errorbar(aes(ymin = 100*(response - SE),
-                    ymax = 100*(response+SE)),
+  geom_errorbar(aes(ymin = (response - SE),
+                    ymax = (response+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model Predicted Cover (%)",
+  labs(x="Native Seeding Density", y = "Model Predicted <br> Proportional Native Cover",
        title = '(a)') +
-  geom_text(aes(label = .group,  y = response * 100),
+  ylim(.7, 1) +
+  geom_text(aes(label = .group,  y = response),
             nudge_x = 0.2, color = "black") +
   scale_color_manual(values = c("darkblue", "red3")) +
   theme(legend.position = "none",
+        axis.title.y = ggtext::element_markdown(),
         plot.title = element_text(size = 9))
 
 b <- ggplot(data = data3, aes(x = Density, y = emmean, color = Density)) +
@@ -240,12 +242,14 @@ b <- ggplot(data = data3, aes(x = Density, y = emmean, color = Density)) +
   geom_errorbar(aes(ymin = (emmean - SE),
                     ymax = (emmean+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model Predicted Biomass (g)",
+  labs(x="Native Seeding Density", y = "Model Predicted <br> Native Biomass (g)",
        title = '(b)') +
+  ylim(30, 100) +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2, color = "black")+
   scale_color_manual(values = c("darkblue", "red3"))+
   theme(legend.position = "none",
+        axis.title.y = ggtext::element_markdown(),
         plot.title = element_text(size = 9))
 
 c <- ggplot(data = data4, aes(x = Mix, y = emmean)) +
@@ -253,26 +257,31 @@ c <- ggplot(data = data4, aes(x = Mix, y = emmean)) +
   geom_errorbar(aes(ymin = (emmean - SE),
                     ymax = (emmean+SE)),
                 width=0, size=0.5) +
-  labs(x="Seeded Mix", y = "Model Predicted Biomass (g)",
+  labs(x="Seeded Mix", y = "Model Predicted <br> Native Biomass (g)",
        title = '(c)') +
+  ylim(30, 100) +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2)+
-  theme(plot.title = element_text(size = 9))
+  theme(plot.title = element_text(size = 9),
+        axis.title.y = ggtext::element_markdown(),)
 (a + b) / c
 ggsave("native_cover_biomass_density_mix_tog.jpeg")
 
 ##Phrag graphs ####
-a <- ggplot(data = data2, aes(x = Density, y = response * 100, color = Density)) +
+a <- ggplot(data = data2, aes(x = Density, y = response, color = Density)) +
   geom_point(size=2) +
-  geom_errorbar(aes(ymin = 100*(response - SE),
-                    ymax = 100*(response+SE)),
+  geom_errorbar(aes(ymin = (response - SE),
+                    ymax = (response+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model Predicted Cover (%)",
+  labs(x="Native Seeding Density", y = "Model Predicted Proportional *P.australis* Cover",
        title = "(a)") +
-  geom_text(aes(label = .group,  y = response * 100),
+  geom_text(aes(label = .group,  y = response),
             nudge_x = 0.2, color = "black") +
+  ylim(0, .1) +
   scale_color_manual(values = c("darkblue", "red3"))+
   theme(plot.title = element_text(size = 9),
+        axis.title.y = ggtext::element_markdown(size = 10),
+        axis.title.x = element_text(size = 10),
         legend.position = "none")
 
 b <- ggplot(data = data5, aes(x = Density, y = emmean, color = Density)) +
@@ -280,12 +289,15 @@ b <- ggplot(data = data5, aes(x = Density, y = emmean, color = Density)) +
   geom_errorbar(aes(ymin = (emmean - SE),
                     ymax = (emmean+SE)),
                 width=0, size=0.5) +
-  labs(x="Native Seeding Density", y = "Model Predicted Biomass (g)",
+  labs(x="Native Seeding Density", y = "Model Predicted *P. australis* Biomass (g)",
        title = '(b)') +
+  ylim(0, 10) +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2, color = "black") +
   scale_color_manual(values = c("darkblue", "red3")) +
   theme(plot.title = element_text(size = 9),
+        axis.title.y = ggtext::element_markdown(size = 10),
+        axis.title.x = element_text(size = 10),
         legend.position = "none")
 
 a + b

@@ -40,7 +40,7 @@ gh_final %>%
   stat_summary(aes(group = interaction(Mix, Density)),
                fun.data = mean_se, geom = "errorbar") +
   scale_color_manual(values = colors)+
-  labs(x = "Seed Mix", y = "Final *Phragmites* Cover")+
+  labs(x = "Seed Mix", y = "Final *P. australis* Cover")+
   scale_color_hue(labels = c('High', 'Low', 'Control')) +
   theme(axis.title.y = ggtext::element_markdown()) +
   scale_x_discrete(labels = c("Grass" = "Grass",
@@ -79,7 +79,7 @@ a <- gh_tw %>%
   ggplot(aes(fill = group, y = cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "", y = "", fill = "Group", 
-       title = "*Phragmites* Present")+
+       title = "*P.australis* Present")+
   facet_grid(~Mix) +
   scale_fill_manual(values = colors)+
   theme(plot.title = ggtext::element_markdown(size = 9),
@@ -116,7 +116,7 @@ b <- gh_tw %>%
   ggplot(aes(fill = group, y = cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
   labs(x = "", y = "Relative Abundance", fill = "Group", 
-       title = "(a) *Phragmites* Absent")+
+       title = "(a) *P.australis* Absent")+
   facet_grid(~Mix) +
   scale_fill_manual(values = colors)+
   theme(plot.title = ggtext::element_markdown(size = 9),
@@ -154,7 +154,7 @@ c <- gh_sl %>%
   ggplot(aes(fill = Species, y = Cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "", y = "", fill = "Species",
-       title = "*Phragmites* Present") +
+       title = "*P.australis* Present") +
   facet_grid(~Mix)+
   scale_fill_manual(values = cp,
                     labels = c('*Bolboschoenus martitimus*', 
@@ -223,7 +223,7 @@ d <- gh_sl %>%
   ggplot(aes(fill = Species, y = Cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
   labs(x = "", y = "Relative Abundance", fill = "Species",
-       title = "(b) *Phragmites* Absent") +
+       title = "(b) *P.australis* Absent") +
   facet_grid(~Mix) +
   scale_fill_manual(values = cp) +
   theme(plot.title = ggtext::element_markdown(size = 9),
@@ -276,21 +276,21 @@ final.df <- b %>%
 cover <- final.df %>%
   mutate(Mix = factor(Mix,
                       levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
-  ggplot(aes(x = Mix, y = P.Cover.Red * -1, color = Density), size = 2) +
+  ggplot(aes(x = Mix, y = P.Cover.Red * -1, color = Density), size = 1) +
   ylim(0,1)+
   stat_summary(aes(group = Density),
-               size = 2,
+               size = 1,
                fun = mean, geom = "point", 
                position = position_dodge(0.95)) +
   stat_summary(aes(group = Density, width = 0),
-               size = 1,
+               size = .5,
                fun.data = mean_se, geom = "errorbar",
                position = position_dodge(0.95)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
-        axis.title.y = ggtext::element_markdown(size = 9),
+        axis.title.y = ggtext::element_markdown(size = 11),
         plot.title = element_text(size = 9),
         axis.title.x = element_text(size = 9)) +
-  labs(y = "Proportion Reduction in *Phragmites* Cover", x = "", title = "(a)")+
+  labs(y = "Reduction in *P.australis* <br>Proportional Cover", x = "", title = "(a)")+
   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))
 
 ## Raw Data over time #### 
@@ -310,7 +310,7 @@ cover_dat %>%
         legend.title = ggtext::element_markdown(),
         legend.position = "bottom") +
   labs(y = "Total Proportional Native Cover", x = "Date",
-       shape = "*Phragmites* Presence") +
+       shape = "*P.australis* Presence") +
   facet_grid(~Mix) +
   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) +
   scale_shape(labels = c("Present", "Absent")) 
@@ -348,7 +348,7 @@ cover_dat %>%
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
         axis.title.y = ggtext::element_markdown(),
         legend.position = "bottom") +
-  labs(y = "Proportional *Phragmites* Cover", x = "Date") +
+  labs(y = "Proportional *P.australis* Cover", x = "Date") +
   facet_grid(~Mix, labeller = as_labeller(trt_label)) +   
   scale_color_manual(values = c("H" = "red3", "L" = "darkblue", "Control" = "darkgray"),
                      labels = c("High", "Low", "Control"))
@@ -389,7 +389,7 @@ biomass_dat %>%
                fun = mean, geom = "point") +
   stat_summary(aes(group = interaction(Mix, Density)),
                fun.data = mean_se, geom = "errorbar", width = 0) +
-  labs(x = "Seed Mix", y = "*Phragmites* Biomass")+
+  labs(x = "Seed Mix", y = "*P.australis* Biomass")+
   scale_color_manual(labels = c('High', 'Low', 'Control'), 
                      values = c("red3", "darkblue", "darkgrey"))+
   scale_x_discrete(labels = c("Grass" = "Grass",
@@ -429,7 +429,7 @@ e <- biomass_l %>%
   ggplot(aes(fill = group, y = cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "", y = "", fill = "Group",
-       title = "*Phragmites* Present")+
+       title = "*P.australis* Present")+
   facet_grid(~Mix) +  
   theme(plot.title = ggtext::element_markdown(size = 9),
                             legend.key.size = unit(.25, "cm"),
@@ -449,7 +449,7 @@ f <- biomass_l %>%
   ggplot(aes(fill = group, y = cover, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
   labs(x = "", y = "Relative Abundance", fill = "Group",
-       title = "(c )*Phragmites* Absent")+
+       title = "(c )*P.australis* Absent")+
   facet_grid(~Mix) +
   theme(plot.title = ggtext::element_markdown(size = 9),
         axis.text.x = element_text(angle = 45, hjust = 0.9),
@@ -485,7 +485,7 @@ g <- biomass_sl %>%
   ggplot(aes(fill = Species, y = Biomass, x = Density)) +
   geom_bar(position = "fill", stat = "identity") +
   labs(x = "Density", y = "", fill = "Species",
-       title = "*Phragmites* Present") +
+       title = "*P.australis* Present") +
   facet_grid(~Mix) +
   scale_fill_manual(values = cp,
                     labels = c('*Schoenoplectus acutus*',
@@ -521,7 +521,7 @@ h <- biomass_sl %>%
   ggplot(aes(fill = Species, y = Biomass, x = Density)) +
   geom_bar(position = "fill", stat = "identity", show.legend = FALSE) +
   labs(x = "Density", y = "Relative Abundance", fill = "Species")+
-  ggtitle("(d) *Phragmites* Absent") +
+  ggtitle("(d) *P.australis* Absent") +
   facet_grid(~Mix) +
   scale_fill_manual(values = cp)+  
   theme(plot.title = ggtext::element_markdown(size = 9), 
@@ -579,21 +579,21 @@ final.df <- b %>%
 biomass <- final.df %>%
   mutate(Mix = factor(Mix,
                       levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
-  ggplot(aes(x = Mix, y = P.Biomass.Red*-1, color = Density), size = 2) +
+  ggplot(aes(x = Mix, y = P.Biomass.Red*-1, color = Density), size = 1) +
   ylim(0,1)+
   stat_summary(aes(group = Density),
-               size = 2,
+               size = 1,
                fun = mean, geom = "point", 
                position = position_dodge(0.95)) +
   stat_summary(aes(group = Density, width = 0),
-               size = 1,
+               size = .5,
                fun.data = mean_se, geom = "errorbar",
                position = position_dodge(0.95)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
-        axis.title.y = ggtext::element_markdown(size = 9),
+        axis.title.y = ggtext::element_markdown(size = 11),
         plot.title = element_text(size = 9),
-        axis.title.x = element_text(size = 9)) +
-  labs(y = "Reduction in *Phragmites* Biomass", x = "Mix", title = "(b)")+
+        axis.title.x = element_text(size = 11)) +
+  labs(y = "Reduction in *P.australis* <br>Biomass", x = "Mix", title = "(b)")+
   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))
 
 #Combine red graphs ####
