@@ -530,7 +530,7 @@ h <- biomass_sl %>%
         axis.title.x = element_text(size = 9)) +
   scale_x_discrete(labels = c("H" = "High",
                               'L' = "Low"))
-(b+a) / (d+c) / (f+e) / (h+g)
+(b+a) / (d+c) / (f+e) / (h+g) + plot_layout(guides = "collect")
 ggsave("stacked_all.jpeg", height = 2500, width = 2500, units = "px")
 
 # ggsave("stacked_biomass_species.jpeg")
