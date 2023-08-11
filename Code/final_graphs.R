@@ -302,9 +302,9 @@ cover_dat %>%
                       levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
   ggplot(aes(x = Date, y = Total, color = Density, shape = Phrag_Presence)) +
   stat_summary(aes(group = interaction(Density, Phrag_Presence)),
-               fun = mean, geom = "point", size = 2) +
+               fun = mean, geom = "point", size = 2, position = position_jitter(seed=3)) +
   stat_summary(aes(group = interaction(Density, Phrag_Presence), width = 0),
-               fun.data = mean_se, geom = "errorbar") +
+               fun.data = mean_se, geom = "errorbar", position = position_jitter(seed=3)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
         axis.title.y = ggtext::element_markdown(),
         legend.title = ggtext::element_markdown(),
@@ -434,7 +434,7 @@ e <- biomass_l %>%
   theme(plot.title = ggtext::element_markdown(size = 9),
                             legend.key.size = unit(.25, "cm"),
                             legend.title = element_text(size = 9),
-        legend.position = "right",
+        legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 0.9),
         axis.title.y = element_text(size = 9)) +
   scale_x_discrete(labels = c("H" = "High",
@@ -470,7 +470,7 @@ biomass_sl <- biomass_dat %>%
   )
 
 #colors
-cp <- c("khaki3", "yellow2", 
+cp <- c("yellow2", "wheat2",
         "seagreen3", "darkgreen", "lawngreen",
         "turquoise2", "skyblue2", "royalblue2",
         "orangered3")
@@ -501,7 +501,7 @@ g <- biomass_sl %>%
         legend.text = ggtext::element_markdown(),
         legend.key.size = unit(.25, "cm"),
         legend.title = element_text(size = 9),
-        legend.position = "right", 
+        legend.position = "none", 
         axis.text.x = element_text(angle = 45, hjust = 0.9),
         axis.title.y = element_text(size = 9),
         axis.title.x = element_text(size = 9)) +
