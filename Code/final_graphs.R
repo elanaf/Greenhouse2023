@@ -342,9 +342,9 @@ cover_dat %>%
                       levels = c("H", "L", "Control"))) %>% 
   ggplot(aes(x = Date, y = Phrag, color = Density)) +
   stat_summary(aes(group = interaction(Density, Phrag_Presence)),
-               fun = mean, geom = "point", size = 2) +
+               fun = mean, geom = "point", size = 2, position = position_jitter(seed=1)) +
   stat_summary(aes(group = interaction(Density, Phrag_Presence), width = .5),
-               fun.data = mean_se, geom = "errorbar") +
+               fun.data = mean_se, geom = "errorbar", position = position_jitter(seed=1)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
         axis.title.y = ggtext::element_markdown(),
         legend.position = "bottom") +
