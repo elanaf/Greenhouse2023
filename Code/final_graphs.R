@@ -157,16 +157,10 @@ c <- gh_sl %>%
        title = "*P.australis* Present") +
   facet_grid(~Mix)+
   scale_fill_manual(values = cp,
-                    labels = c('*Bolboschoenus martitimus*', 
-                               '*Schoenoplectus acutus*',
-                               '*Schoenoplectus americanus*', 
-                               '*Distichlis spicata*',
-                               '*Muhlenbergia asperifolia*', 
-                               '*Puccinellia nuttalliana*',
-                               "*Eutrochium maculatum*",
-                               '*Euthamia occidentalis*',
-                               "*Solidago canadensis*",
-                                '*Phragmites australis*'))+
+                    labels = c("BOMA", "SCAC", "SCAM",
+                               "DISP", "MUAS", "PUNU",
+                               "EUMA", "EUOC", "SOCA",
+                               "PHAU"))+
   theme(plot.title = ggtext::element_markdown(size = 9),
         legend.text = ggtext::element_markdown(),
         legend.key.size = unit(.25, "cm"),
@@ -278,11 +272,11 @@ cover <- final.df %>%
                       levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
   ggplot(aes(x = Mix, y = P.Cover.Red * -1, color = Density), size = 1) +
   ylim(0,1)+
-  stat_summary(aes(group = Density),
+  stat_summary(aes(group = interaction(Mix, Density)),
                size = 1,
                fun = mean, geom = "point", 
                position = position_dodge(0.95)) +
-  stat_summary(aes(group = Density, width = 0),
+  stat_summary(aes(group = interaction(Mix, Density), width = 0),
                size = .5,
                fun.data = mean_se, geom = "errorbar",
                position = position_dodge(0.95)) +
@@ -487,16 +481,7 @@ g <- biomass_sl %>%
   labs(x = "Density", y = "", fill = "Species",
        title = "*P.australis* Present") +
   facet_grid(~Mix) +
-  scale_fill_manual(values = cp,
-                    labels = c('*Schoenoplectus acutus*',
-                               '*Schoenoplectus americanus*', 
-                               '*Distichlis spicata*',
-                               '*Muhlenbergia asperifolia*', 
-                               '*Puccinellia nuttalliana*',
-                               "*Eutrochium maculatum*",
-                               '*Euthamia occidentalis*',
-                               "*Solidago canadensis*",
-                               '*Phragmites australis*'))+ 
+  scale_fill_manual(values = cp)+ 
   theme(plot.title = ggtext::element_markdown(size = 9),
         legend.text = ggtext::element_markdown(),
         legend.key.size = unit(.25, "cm"),
@@ -552,49 +537,31 @@ c <- mean(final.matrix$PHAU)
 
 #calculate the percent cover across all 
 final.df <- b %>%
-  mutate(P.Biomass.Red = (PHAU - c)/c)
+  mutate(P.Biomass.Red = (PHAU - c)/c) %>% 
+  mutate(Pos.Red = P.Biomass.Red * -1)
 
 #graph
-# final.df %>%
-#   mutate(Mix = factor(Mix,
-#                       levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
-#   ggplot(aes(x = Mix, y = P.Biomass.Red*-1, color = Density), size = 2) +
-#   ylim(0,1)+
-#   stat_summary(aes(group = Density),
-#                size = 2,
-#                fun = mean, geom = "point", 
-#                position = position_dodge(0.95)) +
-#   stat_summary(aes(group = Density, width = 0),
-#                size = 1,
-#                fun.data = mean_se, geom = "errorbar",
-#                position = position_dodge(0.95)) +
-#   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
-#         axis.title.y = ggtext::element_markdown()) +
-#   labs(y = "Reduction in *Phragmites* Biomass", x = "Mix")+
-#   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))
-# 
-# ggsave("phrag_biomass_red.jpeg")
-
-
-biomass <- final.df %>%
+biomass <- final.df %>% 
   mutate(Mix = factor(Mix,
                       levels = c("Forb", "Bulrush", "Grass", "Equal"))) %>% 
-  ggplot(aes(x = Mix, y = P.Biomass.Red*-1, color = Density), size = 1) +
-  ylim(0,1)+
-  stat_summary(aes(group = Density),
-               size = 1,
-               fun = mean, geom = "point", 
-               position = position_dodge(0.95)) +
-  stat_summary(aes(group = Density, width = 0),
-               size = .5,
+  ggplot(aes(x = Mix, y = Pos.Red, color = Density), size = 1) +
+  scale_y_continuous(name = "Reduction in *P.australis* <br>Biomass", #for some reason ylim changes the data
+                     breaks = seq(-.25, 2, by = .25)) +
+  stat_summary(aes(group = interaction(Mix, Density)),
+               fun = mean, geom = "point",
+               position = position_dodge(0.95),
+               size = 1) +
+  stat_summary(aes(group = interaction(Mix, Density), width = 0),
                fun.data = mean_se, geom = "errorbar",
-               position = position_dodge(0.95)) +
+               position = position_dodge(0.95), 
+               size = .5) +
   theme(axis.text.x = element_text(angle = 45, hjust = 0.9), 
         axis.title.y = ggtext::element_markdown(size = 11),
         plot.title = element_text(size = 9),
-        axis.title.x = element_text(size = 11)) +
-  labs(y = "Reduction in *P.australis* <br>Biomass", x = "Mix", title = "(b)")+
+        axis.title.x = element_text(size = 9)) +
+  labs( x = "", title = "(b)")+
   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))
+
 
 #Combine red graphs ####
 cover/biomass
