@@ -370,7 +370,8 @@ biomass_dat %>%
   stat_summary(aes(group = interaction(Mix, Density, Phrag_Presence)),
                fun.data = mean_se, geom = "errorbar", width = 0) +
   labs(x = "Seed Mix", y = "Total Native Biomass")+
-  scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))
+  scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))+
+  coord_cartesian(ylim = c(0, 90))
 
 ggsave("native_biomass_by-mix.jpeg")
 
@@ -391,7 +392,8 @@ biomass_dat %>%
                               'Forb' = 'Forb',
                               'Equal'= "Equal",
                               'PHAU' = 'Control')) +
-  theme(axis.title.y = ggtext::element_markdown())
+  theme(axis.title.y = ggtext::element_markdown()) +
+  coord_cartesian(ylim = c(0, 16))
 
 ggsave("phrag_biomass_by-mix.jpeg")
 

@@ -235,7 +235,8 @@ a <- ggplot(data = data1, aes(x = Density, y = response, color = Density)) +
   scale_color_manual(values = c("darkblue", "red3")) +
   theme(legend.position = "none",
         axis.title.y = ggtext::element_markdown(),
-        plot.title = element_text(size = 9))
+        plot.title = element_text(size = 9)) +
+  coord_cartesian(ylim = c(0, 1))
 
 b <- ggplot(data = data3, aes(x = Density, y = emmean, color = Density)) +
   geom_point(size=2) +
@@ -250,7 +251,8 @@ b <- ggplot(data = data3, aes(x = Density, y = emmean, color = Density)) +
   scale_color_manual(values = c("darkblue", "red3"))+
   theme(legend.position = "none",
         axis.title.y = ggtext::element_markdown(),
-        plot.title = element_text(size = 9))
+        plot.title = element_text(size = 9))+
+  coord_cartesian(ylim = c(0, 80))
 
 c <- ggplot(data = data4, aes(x = Mix, y = emmean)) +
   geom_point(size=2) +
@@ -263,7 +265,8 @@ c <- ggplot(data = data4, aes(x = Mix, y = emmean)) +
   geom_text(aes(label = .group,  y = emmean),
             nudge_x = 0.2)+
   theme(plot.title = element_text(size = 9),
-        axis.title.y = ggtext::element_markdown(),)
+        axis.title.y = ggtext::element_markdown())+
+  coord_cartesian(ylim = c(0, 80))
 (a + b) / c
 ggsave("native_cover_biomass_density_mix_tog.jpeg")
 
