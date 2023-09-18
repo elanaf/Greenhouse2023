@@ -4,12 +4,6 @@ library(vegan)
 library(tidyverse)
 library(patchwork)
 
-#the general equation is vegan::diversity(x, "shannon")
-#Examples ####
-diversity(final.df$Replicate, "shannon")
-diversity(final.df$PHAU, "shannon")
-
-#Real thing now ####
 #make wide
 #View(cover_dat)
 
@@ -42,7 +36,7 @@ final.dat$shannon <- div
 final.dat$Phrag_Presence <- factor(final.dat$Phrag_Presence, levels = c("WO", "W"),
                                  labels = c("Absent", "Present"))
 
-final.dat %>% 
+((a <- final.dat %>% 
   filter(Mix != "PHAU") %>% 
   ggplot(aes(x = Mix, y = shannon, color = Density)) +
   stat_summary(aes(group = interaction(Density, Mix)),
@@ -50,25 +44,14 @@ final.dat %>%
   stat_summary(aes(group = interaction(Density, Mix), width = 0),
                fun.data = mean_se, geom = "errorbar") +
   facet_wrap(~Phrag_Presence) +
-  ylab("Shannon Diversity Index") +
-  scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) #change legend labels
-
-#ggsave("cover_shannon.jpeg")
-a <- final.dat %>% 
-  filter(Mix != "PHAU") %>% 
-  ggplot(aes(x = Mix, y = shannon, color = Density)) +
-  stat_summary(aes(group = interaction(Density, Mix)),
-               fun = mean, geom = "point", size = 2) +
-  stat_summary(aes(group = interaction(Density, Mix), width = 0),
-               fun.data = mean_se, geom = "errorbar") +
-  facet_wrap(~Phrag_Presence) +
-  labs(y = "Shannon Diversity Index", x = "Mix", title = '(a)') +
+  ylab("Mean Shannon Diversity Index") +
+  ggtitle("(a)") +
   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue"))+ #change legend labels
   theme(plot.title = element_text(size = 9),
         legend.position = "none",
         axis.text.x = element_text(angle = 45, hjust = 0.9)) +
-  ylim(0, 1.7)
-
+  ylim(0, 2)
+))
 
 # Biomass ####
 #make wide
@@ -96,34 +79,25 @@ final.dat$shannon <- div
 #Plot ####
 final.dat$Phrag_Presence <- factor(final.dat$Phrag_Presence, levels = c("WO", "W"),
                                    labels = c("Absent", "Present"))
-final.dat %>% 
+
+((b <- final.dat %>% 
   filter(Mix != "PHAU") %>% 
   ggplot(aes(x = Mix, y = shannon, color = Density)) +
   stat_summary(aes(group = interaction(Density, Mix)),
                fun = mean, geom = "point", size = 2) +
   stat_summary(aes(group = interaction(Density, Mix), width = 0),
                fun.data = mean_se, geom = "errorbar") +
+  ylab("")+
+  ggtitle("(b)") +
   facet_wrap(~Phrag_Presence) +
-  ylab("Shannon Diversity Index")+
-  scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) + #change legend labels
-  theme(plot.title = element_text(size = 9))
-
-#ggsave("biomass_shannon.jpeg")
-
-b <- final.dat %>% 
-  filter(Mix != "PHAU") %>% 
-  ggplot(aes(x = Mix, y = shannon, color = Density)) +
-  stat_summary(aes(group = interaction(Density, Mix)),
-               fun = mean, geom = "point", size = 2) +
-  stat_summary(aes(group = interaction(Density, Mix), width = 0),
-               fun.data = mean_se, geom = "errorbar") +
-  facet_wrap(~Phrag_Presence) +
-  labs(y="", title = "(b)")+
   scale_color_manual(labels = c('High', 'Low'), values = c("red3", "darkblue")) + #change legend labels
   theme(plot.title = element_text(size = 9),
-        axis.text.x = element_text(angle = 45, hjust = 0.9)) +
-  ylim(0, 1.7)
+        axis.text.x = element_text(angle = 45, hjust = 0.9),
+        legend.position = "right") +
+  ylim(0, 2)
+))
 
 # Combine graphs ####
 a+b
 ggsave("shannon_tog.jpeg")
+
